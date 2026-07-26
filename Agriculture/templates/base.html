@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <!-- Custom CSS for styling -->
+    <style>
+        body, h4, a, p, li {
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .animated-button {
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+            border-radius: 30px;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+        .animated-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(90deg, #2575fc, #6a11cb);
+        }
+
+        .site-title a {
+            text-decoration: none;
+        }
+        
+        /* Chatbot styles */
+        #chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        #chatbot-button {
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        #chatbot-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        #chatbot-button img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: contain;
+        }
+        
+        #chatbox {
+            display: none;
+            width: 350px;
+            height: 500px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            flex-direction: column;
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+        }
+        
+        #chatbox-header {
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            color: white;
+            padding: 15px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+        
+        #chatbox-body {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background-color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        #chatbox-footer {
+            padding: 10px;
+            border-top: 1px solid #ddd;
+            background-color: white;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+        
+        #user-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+        }
+        
+        .user-message {
+            background-color: #2575fc;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 18px 18px 0 18px;
+            margin-bottom: 10px;
+            max-width: 80%;
+            align-self: flex-end;
+            word-wrap: break-word;
+        }
+        
+        .bot-message {
+            background-color: #e9ecef;
+            color: black;
+            padding: 8px 12px;
+            border-radius: 18px 18px 18px 0;
+            margin-bottom: 10px;
+            max-width: 80%;
+            align-self: flex-start;
+            word-wrap: break-word;
+        }
+        
+        .message-container {
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+
+    <script src="{{ url_for('static', filename='js/test.js') }}"></script>
+    <title>{% block title %}{% endblock title %} - Precision Agriculture Using Machine Learning</title>
+    <script type="text/JavaScript" src="{{ url_for('static', filename='scripts/cities.js') }}"></script>
+</head>
+
+<body>
+    <header>
+        <div class="container-fluid p-3">
+            <div class="row">
+                <div class="col-lg-6 col-md-12 col-12 site-title text-center text-white">
+                    <a href="{{ url_for('hello_world') }}">
+                        <h4 class="font-weight-bolder text-white" style="font-family: 'Times New Roman';">Precision Agriculture Using ML & IOT</h4>
+                    </a>
+                </div>
+                <div class="col-lg-6 col-md-6 col-12 text-center text-white">
+                    <a href="{{ url_for('login') }}" class="animated-button mx-2">Login</a>
+                    <a href="{{ url_for('signup') }}" class="animated-button mx-2">Signup</a>
+                    <a href="{{ url_for('AdminLogin') }}" class="animated-button mx-2">Admin login</a>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid p-0 border border-dark">
+            <nav class="navbar navbar-expand-lg navbar-light bg-white">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mx-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="{{ url_for('hello_world') }}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('aboutus') }}">About Us</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('contact') }}">Contact</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+    
+    {% block body %}{% endblock body %}
+    
+    <!-- Chatbot Container -->
+    <div id="chatbot-container">
+        <div id="chatbox">
+            <div id="chatbox-header">
+                <img src="https://cdn-icons-png.flaticon.com/512/4474/4474059.png" width="30" height="30" style="margin-right: 10px;">
+                AgriBot Assistant
+            </div>
+            <div id="chatbox-body">
+                <div class="message-container">
+                    <div class="bot-message">Hello! I'm your agriculture assistant. How can I help you with crops, fertilizers, or plant diseases today?</div>
+                </div>
+            </div>
+            <div id="chatbox-footer">
+                <input type="text" id="user-input" placeholder="Type your message here..." autocomplete="off">
+            </div>
+        </div>
+        <button id="chatbot-button">
+            <img src="https://1000logos.net/wp-content/uploads/2023/05/ChatGPT-Logo.png" alt="AgriBot Logo">
+        </button>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    
+    <!-- Chatbot Script -->
+    <script>
+        // Chatbot responses
+        const responses = {
+            "hello": "Hello! I'm your agriculture assistant. How can I help you with crops, fertilizers, or plant diseases today?",
+            "hi": "Hi there! Ask me anything about crops, fertilizers, or plant diseases.",
+            "hey": "Hey! How can I assist you with your agricultural needs today?",
+            "how are you": "I'm just a bot, but I'm ready to help you with all your agriculture questions!",
+            "what crops grow in clay soil": "Crops that do well in clay soil include wheat, barley, oats, beans, and some fruit trees like apple and pear. Clay soil retains moisture well but needs proper drainage.",
+            "best fertilizer for tomatoes": "Tomatoes benefit from a balanced fertilizer (10-10-10) when planting. As they grow, switch to a low-nitrogen, high-phosphorus fertilizer (5-10-10) to promote fruiting.",
+            "what's wrong with my plant": "I'd need more details to diagnose plant issues. Could you describe the symptoms? Look for discoloration, spots, wilting, or abnormal growth patterns.",
+            "common rice diseases": "Common rice diseases include blast (fungal), bacterial leaf blight, sheath blight, and tungro virus. Proper water management and resistant varieties help prevent these.",
+            "how to improve soil fertility": "Improve soil fertility by adding organic matter (compost, manure), practicing crop rotation, using cover crops, and applying appropriate fertilizers based on soil tests.",
+            "when to plant corn": "Plant corn when soil temperatures reach at least 50°F (10°C), typically 2-3 weeks after the last spring frost. In most regions, this is between April and June.",
+            "organic fertilizers": "Organic fertilizers include compost, manure, bone meal, blood meal, fish emulsion, and green manure crops. They release nutrients slowly and improve soil structure.",
+            "leaf yellowing causes": "Leaf yellowing can be caused by nutrient deficiencies (nitrogen, iron), overwatering, poor drainage, pests, diseases, or insufficient sunlight.",
+            "best crops for hot climate": "Heat-tolerant crops include okra, sweet potatoes, peppers, eggplant, watermelon, cowpeas, and amaranth. Many tropical fruits also thrive in hot climates.",
+            "how often to fertilize vegetables": "Most vegetables benefit from light fertilization every 3-4 weeks during the growing season. Fast-growing crops like lettuce may need more frequent feeding.",
+            "identify plant disease": "To identify plant diseases, examine leaves for spots, discoloration, or powdery coatings. Check stems for lesions and roots for rot. You can upload a photo in our disease detection system.",
+            "natural pest control": "Natural pest control methods include neem oil, insecticidal soaps, diatomaceous earth, companion planting, and encouraging beneficial insects like ladybugs.",
+            "goodbye": "Goodbye! Feel free to return if you have more agriculture questions. Happy farming!",
+            "thanks": "You're welcome! Let me know if you need any more information about crops, fertilizers, or plant health.",
+            "thank you": "You're welcome! Happy to help with your agricultural needs.",
+            "what is precision agriculture": "Precision agriculture uses technology like sensors, GPS, and data analysis to optimize field-level management regarding crop farming. It helps in efficient resource use and higher yields.",
+            "how to test soil": "You can test soil using a home test kit or by sending samples to a lab. Test for pH, nitrogen, phosphorus, potassium, and organic matter content for complete analysis.",
+            "crop rotation benefits": "Crop rotation improves soil health, reduces pest buildup, prevents nutrient depletion, and can increase yields. It's a key practice in sustainable agriculture.",
+            "symptoms of nitrogen deficiency": "Nitrogen deficiency shows as yellowing of older leaves, stunted growth, and reduced yields. Plants may appear pale green or yellow overall.",
+            "best time to water plants": "The best time to water plants is early morning, which reduces evaporation and allows foliage to dry before evening, preventing fungal diseases.",
+            "what is npk": "NPK stands for Nitrogen (N), Phosphorus (P), and Potassium (K) - the three primary nutrients plants need. Fertilizer labels show their ratios (e.g., 10-10-10)."
+        };
+
+        // Display user message
+        function displayUserMessage(message) {
+            const messageContainer = document.createElement("div");
+            messageContainer.classList.add("message-container");
+            
+            const userMessageDiv = document.createElement("div");
+            userMessageDiv.classList.add("user-message");
+            userMessageDiv.textContent = message;
+            
+            messageContainer.appendChild(userMessageDiv);
+            document.getElementById("chatbox-body").appendChild(messageContainer);
+            
+            // Scroll to bottom
+            document.getElementById("chatbox-body").scrollTop = document.getElementById("chatbox-body").scrollHeight;
+        }
+
+        // Display bot message
+        function displayBotMessage(message) {
+            const messageContainer = document.createElement("div");
+            messageContainer.classList.add("message-container");
+            
+            const botMessageDiv = document.createElement("div");
+            botMessageDiv.classList.add("bot-message");
+            botMessageDiv.textContent = message;
+            
+            messageContainer.appendChild(botMessageDiv);
+            document.getElementById("chatbox-body").appendChild(messageContainer);
+            
+            // Scroll to bottom
+            document.getElementById("chatbox-body").scrollTop = document.getElementById("chatbox-body").scrollHeight;
+        }
+
+        // Send message to chatbot
+        document.getElementById("user-input").addEventListener("keypress", function (e) {
+            if (e.key === "Enter") {
+                const userInput = e.target.value.trim();
+                if (userInput === "") return;
+                
+                displayUserMessage(userInput);
+                e.target.value = "";
+
+                // Find the best matching response
+                let botResponse = "I'm not sure about that. Could you ask about crops, fertilizers, or plant diseases?";
+                const lowerInput = userInput.toLowerCase();
+                
+                // Check for exact matches first
+                if (responses[lowerInput]) {
+                    botResponse = responses[lowerInput];
+                } else {
+                    // Check for partial matches
+                    for (const key in responses) {
+                        if (lowerInput.includes(key)) {
+                            botResponse = responses[key];
+                            break;
+                        }
+                    }
+                }
+
+                setTimeout(() => displayBotMessage(botResponse), 500);
+            }
+        });
+
+        // Toggle chatbot visibility
+        document.getElementById("chatbot-button").addEventListener("click", function () {
+            const chatbox = document.getElementById("chatbox");
+            chatbox.style.display = chatbox.style.display === "none" ? "flex" : "none";
+        });
+    </script>
+</body>
+
+</html>
